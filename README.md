@@ -105,10 +105,26 @@ Kinds: `ErrAuthentication`, `ErrInsufficientCredits`, `ErrRateLimit`, `ErrValida
 | `WithMaxRetries` | `3` | network errors, 429, 5xx |
 | `WithHTTPClient` | `http.DefaultClient` | |
 
+## CLI
+
+The module also ships the `smtping` command, as a single binary with no runtime.
+
+```bash
+brew install smtping/tap/smtping                      # macOS, Linux
+scoop bucket add smtping https://github.com/smtping/scoop-bucket
+scoop install smtping                                 # Windows
+curl -fsSL https://smtping.com/install.sh | sh        # macOS, Linux
+irm https://smtping.com/install.ps1 | iex             # Windows PowerShell
+go install github.com/smtping/smtping-go/cmd/smtping@latest
+```
+
+Binaries for Linux, macOS and Windows (amd64, arm64) are attached to every [release](https://github.com/smtping/smtping-go/releases). Commands, output and exit codes are the same as the npm CLI: see [smtping.com/cli](https://smtping.com/cli).
+
 ## Links
 
 - [API documentation](https://smtping.com/docs)
 - [Pricing](https://smtping.com/pricing)
 - Support: support@smtping.com
+- Blog: [SMTPedia](https://smtpedia.com)
 
 MIT License
