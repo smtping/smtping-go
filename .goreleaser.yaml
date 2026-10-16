@@ -1,0 +1,53 @@
+version: 2
+project_name: smtping
+
+builds:
+  - id: smtping
+    main: ./cmd/smtping
+    binary: smtping
+    env:
+      - CGO_ENABLED=0
+    goos: [linux, darwin, windows]
+    goarch: [amd64, arm64]
+    ldflags:
+      - -s -w -X main.version={{ .Version }}
+
+archives:
+  - id: smtping
+    formats: [tar.gz]
+    format_overrides:
+      - goos: windows
+        formats: [zip]
+    name_template: "smtping_{{ .Os }}_{{ .Arch }}"
+    files:
+      - LICENSE
+      - README.md
+
+checksum:
+  name_template: checksums.txt
+
+release:
+  mode: keep-existing
+
+brews:
+  - name: smtping
+    repository:
+      owner: smtping
+      name: homebrew-tap
+      token: "{{ .Env.TAP_GITHUB_TOKEN }}"
+    directory: Formula
+    homepage: https://smtping.com/cli
+    description: Verify email addresses and lists from the terminal with SMTPing
+    license: MIT
+    test: |
+      system "#{bin}/smtping", "--version"
+
+scoops:
+  - name: smtping
+    repository:
+      owner: smtping
+      name: scoop-bucket
+      token: "{{ .Env.TAP_GITHUB_TOKEN }}"
+    homepage: https://smtping.com/cli
+    description: Verify email addresses and lists from the terminal with SMTPing
+    license: MIT
