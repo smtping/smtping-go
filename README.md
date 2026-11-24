@@ -37,6 +37,8 @@ Every result has a `Band()` for simple routing:
 | `BandAvoid` | invalid, spamtrap, disposable, blacklisted, complainer, spambot, inbox_full | remove |
 | `BandJudgement` | catch_all, unknown, role and others | your call |
 
+The band comes from the API. If a response has none, it is derived from the status.
+
 ## Verify a list
 
 Small lists with parallel single calls:

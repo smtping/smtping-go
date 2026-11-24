@@ -2,6 +2,7 @@ package smtping
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"net/http"
 	"net/http/httptest"
@@ -13,6 +14,24 @@ func TestBandFor(t *testing.T) {
 	for status, want := range cases {
 		if got := BandFor(status); got != want {
 			t.Errorf("BandFor(%q) = %q, want %q", status, got, want)
+		}
+	}
+}
+
+func TestServerBandWins(t *testing.T) {
+	cases := []struct {
+		json string
+		want Band
+	}{
+		{`{"status":"valid","band":"judgement"}`, BandJudgement},
+		{`{"status":"valid"}`, BandSafe},
+		{`{"status":"valid","band":"other"}`, BandSafe},
+		{`{"status":"no_reply"}`, BandAvoid},
+	}
+	for _, c := range cases {
+		var r VerifyResult
+		if err := json.Unmarshal([]byte(c.json), &r); err != nil || r.Band() != c.want {
+			t.Errorf("%s: band %q, want %q (%v)", c.json, r.Band(), c.want, err)
 		}
 	}
 }

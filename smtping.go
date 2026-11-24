@@ -51,12 +51,12 @@ var emailRe = regexp.MustCompile(`^[^@\s]+@[^@\s]+\.[^@\s]+$`)
 // IsEmail is the basic syntax check the SDK applies before bulk jobs and batch checks.
 func IsEmail(v string) bool { return emailRe.MatchString(strings.TrimSpace(v)) }
 
-// BandFor returns the routing band for a verification status.
+// BandFor returns the routing band for a verification status. VerifyResult.Band is the one the API decided.
 func BandFor(status string) Band {
 	switch status {
 	case "valid", "alias":
 		return BandSafe
-	case "invalid", "spamtrap", "disposable", "blacklisted", "complainer", "spambot", "inbox_full":
+	case "invalid", "spamtrap", "disposable", "blacklisted", "complainer", "spambot", "inbox_full", "no_reply":
 		return BandAvoid
 	}
 	return BandJudgement
@@ -85,10 +85,18 @@ type VerifyResult struct {
 	IsFreeDomain      *bool  `json:"isFreeDomain,omitempty"`
 	IsRoleBasedDomain *bool  `json:"isRoleBasedDomain,omitempty"`
 	IsTypos           *bool  `json:"isTypos,omitempty"`
+	ServerBand        Band   `json:"band,omitempty"` // as returned by the API; use Band()
 }
 
-// Band returns Safe, Avoid or Judgement, derived from Status.
-func (r VerifyResult) Band() Band { return BandFor(r.Status) }
+// Band returns Safe, Avoid or Judgement as decided by the API, or derived from Status when the
+// response has no band.
+func (r VerifyResult) Band() Band {
+	switch r.ServerBand {
+	case BandSafe, BandAvoid, BandJudgement:
+		return r.ServerBand
+	}
+	return BandFor(r.Status)
+}
 
 type CheckResult struct {
 	Email            string `json:"email"`
